@@ -1,0 +1,21 @@
+package org.learning.app;
+
+import java.util.concurrent.RecursiveTask;
+
+public class CountWordProcessor extends RecursiveTask<Integer> {
+	private static String path;
+	private static String word;
+	
+	public  CountWordProcessor(String path, String word) {
+		this.path = path;
+		this.word = word;
+		
+	}
+
+	@Override
+	protected Integer compute() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

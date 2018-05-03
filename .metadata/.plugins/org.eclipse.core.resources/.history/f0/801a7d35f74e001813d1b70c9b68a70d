@@ -1,0 +1,60 @@
+package org.learning.app;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.RecursiveTask;
+import java.util.stream.Collectors;
+
+public class CountWordProcessor extends RecursiveTask<Integer> {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private  String path;
+	private String word;
+	
+	public  CountWordProcessor(String path, String word) {
+		this.path = path;
+		this.word = word;
+		
+	}
+	
+	Integer totalCnt = new Integer(0);
+
+	@Override
+	protected Integer compute() {
+		
+		File[] root = new File(this.path).listFiles();
+		List<File> rootFiles = Arrays.asList(root);
+		
+		rootFiles.forEach(file -> {
+			if(file.isDirectory() && !file.toString().equals(this.path)){
+				System.out.println("Directory ---> "+file);
+				CountWordProcessor cnt  = new CountWordProcessor(file.toString(), this.word);
+				cnt.fork();
+				totalCnt += cnt.join();
+				
+			}
+			else{
+				if(file.isFile()){
+					System.out.println("File ---> "+file);
+					try {
+						List<String> list = Files.lines(Paths.get(file.toString(),"Cp1252"))
+								.filter(line -> line.contains(this.word))
+								.collect(Collectors.toList());
+						totalCnt += Integer.valueOf(list.size());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		
+		return totalCnt;
+	}
+
+}

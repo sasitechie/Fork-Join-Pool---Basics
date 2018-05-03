@@ -1,0 +1,54 @@
+package org.learning.app;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.RecursiveTask;
+import java.util.stream.Collectors;
+
+public class CountWordProcessor extends RecursiveTask<Integer> {
+	private static String path;
+	private static String word;
+	
+	public  CountWordProcessor(String path, String word) {
+		this.path = path;
+		this.word = word;
+		
+	}
+	
+	Integer totalCnt = new Integer(0);
+
+	@Override
+	protected Integer compute() {
+		File[] root = new File(this.path).listFiles();
+		List<File> rootFiles = Arrays.asList(root);
+		
+		rootFiles.forEach(file -> {
+			if(file.isDirectory()){
+				CountWordProcessor cnt  = new CountWordProcessor(file.toString(), this.word);
+				cnt.fork();
+				totalCnt += cnt.join();
+				
+			}
+			else{
+				if(file.isFile()){
+					try {
+						List<String> list = Files.lines(Paths.get(file.toString()))
+								.filter(f->f.contains(this.word)).collect(Collectors.toList());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+				
+				);
+		
+		return null;
+	}
+
+}

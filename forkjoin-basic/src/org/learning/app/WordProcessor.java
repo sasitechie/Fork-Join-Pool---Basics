@@ -1,0 +1,19 @@
+package org.learning.app;
+
+import java.util.concurrent.ForkJoinPool;
+
+public class WordProcessor {
+
+	public static void main(String[] args) {
+		
+		Integer totalCnt  = new Integer(0);
+		ForkJoinPool pool = new ForkJoinPool();
+		
+		CountWordProcessor cnt = new CountWordProcessor("F:\\Content\\", "ForkJoinPool");
+		//call fork join task
+		totalCnt = pool.invoke(cnt);
+		System.out.println("FINAL COUNT --> "+totalCnt);
+		
+		}
+
+}
